@@ -6,18 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>445</width>
-    <height>351</height>
+    <width>300</width>
+    <height>350</height>
    </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>300</width>
+    <height>350</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Основное окно</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="name_lbl">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>60</x>
       <y>20</y>
       <width>191</width>
       <height>61</height>
@@ -27,11 +33,11 @@
      <string>MHelper</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="addmail_btn">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>110</y>
+      <x>90</x>
+      <y>160</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -40,11 +46,11 @@
      <string>Добавить письмо</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="seemail_btn">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>170</y>
+      <x>90</x>
+      <y>230</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -54,29 +60,6 @@
     </property>
    </widget>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>445</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>О разработчике</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menu_2">
-    <property name="title">
-     <string>Помощь</string>
-    </property>
-   </widget>
-   <addaction name="menu_2"/>
-   <addaction name="menu"/>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
