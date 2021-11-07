@@ -3,10 +3,10 @@ from PyQt5.QtGui import QPixmap
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog
 
-from Exceptions import FormatError
+from Exceptions import FormatError, SenderError, RecipientError
 
 
-class SeeMailWindow(QMainWindow):
+class SeeMailWindow(QMainWindow):  # Класс окна для прссмотра бд с письмами
     def __init__(self):
         super(SeeMailWindow, self).__init__()
         self.init_ui()
@@ -15,33 +15,28 @@ class SeeMailWindow(QMainWindow):
         uic.loadUi('designs\\see_db.ui', self)
 
 
-class AddMailDialog(QDialog):
+class AddMailDialog(QDialog):  # Класс диалогового окна для загрузки письма в бд
     def __init__(self):
         super(AddMailDialog, self).__init__()
         self.init_ui()
 
-    def init_ui(self):
+    def init_ui(self):  # Инициализация графических элементов
         uic.loadUi('designs\\dialog.ui', self)
         self.upload_btn.clicked.connect(self.upload)
         self.handle_btn.clicked.connect(self.handle)
         self.save_btn.clicked.connect(self.save)
         self.pixmap = QPixmap('system pictures\\file_icon.png')
 
-    def check_correct_filepath(self, path):
-        a = open(path, 'wb')
-        if path.split('/')[-1].split('.')[-1] not in ['jpg', 'tif', 'pdf', 'png', 'txt']:
-            raise FormatError
-
-    def upload(self):
+    def upload(self):  # Функция открытия диалога для выбора файла и отработка ошибок
         try:
-            path_to_file = QFileDialog.getOpenFileName(self, 'Выбрать картинку', '', 'Картинка (*.jpg);;'
-                                                                                     'Картинка(*.png);;'
-                                                                                     'Картинка (*.tif);;'
-                                                                                     'Текст (*.txt);;'
-                                                                                     'Все (*);')[0]
-            self.check_correct_filepath(path_to_file)
+            self.path_to_file = QFileDialog.getOpenFileName(self, 'Выбрать картинку', '', 'Текст (*.txt);;'
+                                                                                          'Картинка(*.png);;'
+                                                                                          'Картинка (*.tif);;'
+                                                                                          'Картинка (*.jpg);;'
+                                                                                          'Все (*);')[0]
+            self.check_correct_file(self.path_to_file)
             self.label_picture.setPixmap(self.pixmap)
-            self.label_error.setText(f'Файл {path_to_file.split("/")[-1]} загружен')
+            self.label_error.setText(f'Файл {self.path_to_file.split("/")[-1]} загружен')
 
             self.upload_btn.setEnabled(False)
             self.handle_btn.setEnabled(True)
@@ -50,12 +45,66 @@ class AddMailDialog(QDialog):
         except Exception as ex:
             print(ex)
             self.label_error.setText('Ошибка при загрузке файла')
+        # if self.check_correct_file(self.path_to_file) != 'txt':  # Преобразование файла в текст
+        #     self.photo_to_text(self.path_to_file)
+
+    def check_correct_file(self, path):  # Проверка достоверности нахождения файла в директории
+        # и проверка формата файла
+        a = open(path, 'wb')  # Если файла не будет в директории выбросит ошибку, которую захватит обработчик
+        extension = path.split('/')[-1].split('.')[-1]
+        if extension not in ['jpg', 'tif', 'pdf', 'png', 'txt']:
+            raise FormatError
+        return extension
 
     def handle(self):
-        pass
+        # Здесь должны получить результат работы моделей определяющих теги письма, временно они заменены константами
+        theme = 'Олег'
+        category = 'Срочно'
+        company = 'IRZ'
+        # Блокируется кнопка обработки и пользователь может изменить настройки вручную
+        self.handle_btn.setEnabled(False)
+        self.save_btn.setEnabled(True)
+        self.recipient_line.setEnabled(True)
+        self.category_cb.setEnabled(True)
+        self.company_line.setEnabled(True)
+        # Передаем к пользователю полученные моделью теги
+        self.recipient_line.setText(theme)
+        self.company_line.setText(company)
+        # Если пользователь редактирует теги, то проверяем их корректность и временно блокируем кнопку сохранения
+        self.recipient_line.textChanged.connect(self.block_save_btn)
+        self.company_line.textChanged.connect(self.block_save_btn)
+
+    def block_save_btn(self):  # Проверка пользовательских тегов и блокировка кнопки сохранить
+        self.save_btn.setEnabled(False)
+        self.check_tegs()
+
+    def check_tegs(self):  # Функция проверки тегов пользователя
+        try:
+            if self.recipient_line.text():
+                for i in self.recipient_line.text():
+                    if not i.isalpha():
+                        raise RecipientError
+            else:
+                raise RecipientError
+            if self.company_line.text():
+                for i in self.company_line.text():
+                    if not i.isalpha():
+                        raise SenderError
+            else:
+                raise SenderError
+            self.save_btn.setEnabled(True)
+            self.label_tegs_error.setText('')
+        except RecipientError:
+            self.label_tegs_error.setText('Некорректный получатель')
+        except SenderError:
+            self.label_tegs_error.setText('Некорректный отправитель')
+        except Exception as ex:
+            print(ex)
+            self.label_tegs_error.setText('Ошибка')
 
     def save(self):
-        pass
+        print(self.path_to_file, self.recipient_line.text(), self.category_cb.currentText(), self.company_line.text())
+        self.close()
 
 
 class MainWindow(QMainWindow):
