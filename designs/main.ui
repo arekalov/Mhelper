@@ -17,14 +17,41 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Основное окно</string>
+   <string>MHelper</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow{
+background-color: rgb(255, 255, 255);
+}
+
+QPushButton{
+background-color: rgb(136, 216, 255);
+border-radius: 25px;
+}
+
+QPushButton:hover{
+background-color: rgb(136, 206, 235);
+border-radius: 25px;
+}
+
+QPushButton:pressed{
+background-color: rgb(136, 206, 235);
+border-radius: 20px;
+}
+
+QLabel{
+ font: 30pt/30pt fantasy;
+}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="name_lbl">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>20</y>
+      <x>70</x>
+      <y>40</y>
       <width>191</width>
       <height>61</height>
      </rect>
@@ -36,9 +63,9 @@
    <widget class="QPushButton" name="addmail_btn">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>80</x>
       <y>160</y>
-      <width>121</width>
+      <width>141</width>
       <height>51</height>
      </rect>
     </property>
@@ -49,9 +76,9 @@
    <widget class="QPushButton" name="seemail_btn">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>230</y>
-      <width>121</width>
+      <x>80</x>
+      <y>220</y>
+      <width>141</width>
       <height>51</height>
      </rect>
     </property>
