@@ -28,7 +28,8 @@ background-color: rgb(255, 255, 255);
 }
 
 QPushButton{
-background-color: rgb(136, 216, 255);
+background-color: rgb(255, 255, 255);
+border: 2px solid rgb(136, 206, 235);
 border-radius: 25px;
 }
 
@@ -47,19 +48,6 @@ QLabel{
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="name_lbl">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>40</y>
-      <width>191</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>MHelper</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="addmail_btn">
     <property name="geometry">
      <rect>
@@ -85,6 +73,38 @@ QLabel{
     <property name="text">
      <string>Мои письма</string>
     </property>
+   </widget>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>301</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(136, 206, 235);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="name_lbl">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>30</y>
+       <width>191</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>MHelper</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
