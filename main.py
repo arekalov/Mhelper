@@ -10,6 +10,7 @@ class SeeMailWindow(QMainWindow):  # Класс окна для прссмотр
     def __init__(self):
         super(SeeMailWindow, self).__init__()
         self.init_ui()
+        self.tags = ()
 
     def init_ui(self):
         uic.loadUi('designs\\see_db.ui', self)
@@ -25,7 +26,7 @@ class AddMailDialog(QDialog):  # Класс диалогового окна дл
         self.upload_btn.clicked.connect(self.upload)
         self.handle_btn.clicked.connect(self.handle)
         self.save_btn.clicked.connect(self.save)
-        self.pixmap = QPixmap('system pictures\\file_icon.png')
+        self.pixmap = QPixmap('system\\file_icon.png')
 
     def upload(self):  # Функция открытия диалога для выбора файла и отработка ошибок
         try:
@@ -103,7 +104,7 @@ class AddMailDialog(QDialog):  # Класс диалогового окна дл
             self.label_tegs_error.setText('Ошибка')
 
     def save(self):
-        print(self.path_to_file, self.recipient_line.text(), self.category_cb.currentText(), self.company_line.text())
+        self.tags  = (self.path_to_file, self.recipient_line.text(), self.category_cb.currentText(), self.company_line.text())
         self.close()
 
 
@@ -120,6 +121,7 @@ class MainWindow(QMainWindow):
     def open_addmail_dialog(self):
         self.addmaildialog = AddMailDialog()
         self.addmaildialog.show()
+        # tegs = self.addmaildialog.tags
 
     def show_seemail_window(self):
         self.seemailwindow = SeeMailWindow()

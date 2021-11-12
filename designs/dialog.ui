@@ -26,12 +26,29 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QDialog{
-background-color: rgb(255, 255, 255);
+   <string notr="true">QPushButton#upload_btn{
+border-radius: 10px;
 }
+
+QPushButton#upload_btn:pressed{
+border-radius: 5px;
+}
+
+QPushButton#upload_btn{
+border-radius: 10px;
+}
+
+QPushButton#save_btn:pressed{
+border-radius: 10px;
+}
+
+QDialog{
+background-color: rgb(208, 235, 255);
+}
+
 QPushButton{
 background-color: rgb(136, 216, 255);
-border-radius: 25px;
+border-radius: 20px;
 }
 
 QPushButton:hover{
@@ -45,7 +62,15 @@ border-radius: 20px;
 }
 
 upload_btn{
-border-radius: 25px;
+border-radius: 10px;
+}
+
+QLineEdit{
+background-color: rgb(255, 255, 255);
+}
+
+QComboBox{
+background-color: rgb(255, 255, 255);
 }</string>
   </property>
   <widget class="QPushButton" name="handle_btn">
@@ -222,7 +247,7 @@ border-radius: 25px;
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">border-radiusr: 25px;</string>
+    <string notr="true">`</string>
    </property>
    <property name="text">
     <string>Загрузить файл</string>
