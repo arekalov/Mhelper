@@ -1,7 +1,8 @@
 import sys
+import sqlite3
 from PyQt5.QtGui import QPixmap
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog, QTableWidgetItem
 
 from Exceptions import FormatError, SenderError, RecipientError
 
@@ -10,16 +11,29 @@ class SeeMailWindow(QMainWindow):  # Класс окна для прссмотр
     def __init__(self):
         super(SeeMailWindow, self).__init__()
         self.init_ui()
-        self.tags = ()
 
     def init_ui(self):
         uic.loadUi('designs\\see_db.ui', self)
+        self.find_btn.clicked.connect(self.load_table)
+
+    def load_table(self):
+        self.con = sqlite3.connect('db.db')
+        self.cur = self.con.cursor()
+        res = self.cur.execute(f'''SELECT * FROM main''')
+        self.tableWidget.setColumnCount(5)
+        for i, row in enumerate(res):
+            self.tableWidget.setRowCount(
+                self.tableWidget.rowCount() + 1)
+            for j, elem in enumerate(row):
+                self.tableWidget.setItem(
+                    i, j, QTableWidgetItem(str(elem)))
 
 
 class AddMailDialog(QDialog):  # Класс диалогового окна для загрузки письма в бд
     def __init__(self):
         super(AddMailDialog, self).__init__()
         self.init_ui()
+        self.tags = ()
 
     def init_ui(self):  # Инициализация графических элементов
         uic.loadUi('designs\\dialog.ui', self)
@@ -121,7 +135,6 @@ class MainWindow(QMainWindow):
     def open_addmail_dialog(self):
         self.addmaildialog = AddMailDialog()
         self.addmaildialog.show()
-        # tegs = self.addmaildialog.tags
 
     def show_seemail_window(self):
         self.seemailwindow = SeeMailWindow()
