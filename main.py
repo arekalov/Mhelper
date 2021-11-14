@@ -4,7 +4,13 @@ from PyQt5.QtGui import QPixmap
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog, QTableWidgetItem
 
+from BdConnect import BdConnect
 from Exceptions import FormatError, SenderError, RecipientError
+from text_extractor import image_to_text, txt_to_text
+from ner_model import ner_predict
+from Classifier import get_category
+
+bd = BdConnect('db.db')
 
 
 class SeeMailWindow(QMainWindow):  # Класс окна для прссмотра бд с письмами
@@ -33,7 +39,6 @@ class AddMailDialog(QDialog):  # Класс диалогового окна дл
     def __init__(self):
         super(AddMailDialog, self).__init__()
         self.init_ui()
-        self.tags = ()
 
     def init_ui(self):  # Инициализация графических элементов
         uic.loadUi('designs\\dialog.ui', self)
@@ -60,22 +65,36 @@ class AddMailDialog(QDialog):  # Класс диалогового окна дл
         except Exception as ex:
             print(ex)
             self.label_error.setText('Ошибка при загрузке файла')
-        # if self.check_correct_file(self.path_to_file) != 'txt':  # Преобразование файла в текст
-        #     self.photo_to_text(self.path_to_file)
 
     def check_correct_file(self, path):  # Проверка достоверности нахождения файла в директории
         # и проверка формата файла
-        a = open(path, 'wb')  # Если файла не будет в директории выбросит ошибку, которую захватит обработчик
+        a = open(path, 'rb')  # Если файла не будет в директории выбросит ошибку, которую захватит обработчик
         extension = path.split('/')[-1].split('.')[-1]
         if extension not in ['jpg', 'tif', 'pdf', 'png', 'txt']:
             raise FormatError
         return extension
 
     def handle(self):
-        # Здесь должны получить результат работы моделей определяющих теги письма, временно они заменены константами
-        theme = 'Олег'
-        category = 'Срочно'
-        company = 'IRZ'
+        self.string_text = self.upload_text(self.path_to_file)
+
+        tags_and_tokens = ner_predict(self.string_text)
+        if 'PERSON' in tags_and_tokens.keys():
+            reciepment = tags_and_tokens['PERSON'][0]
+        else:
+            reciepment = 'Не найдено'
+        if 'ORGANIZATION' in tags_and_tokens.keys():
+            company = tags_and_tokens['ORGANIZATION'][-1]
+        else:
+            company = 'Не найдено'
+
+        category_ind = get_category(self.string_text)
+        if category_ind == '1' or category_ind == 1:
+            self.category_cb.setCurrentIndex(2)
+        elif category_ind == '0' or category_ind == 0:
+            self.category_cb.setCurrentIndex(0)
+        else:
+            self.category_cb.setCurrentIndex(1)
+
         # Блокируется кнопка обработки и пользователь может изменить настройки вручную
         self.handle_btn.setEnabled(False)
         self.save_btn.setEnabled(True)
@@ -83,11 +102,18 @@ class AddMailDialog(QDialog):  # Класс диалогового окна дл
         self.category_cb.setEnabled(True)
         self.company_line.setEnabled(True)
         # Передаем к пользователю полученные моделью теги
-        self.recipient_line.setText(theme)
+        self.recipient_line.setText(reciepment)
         self.company_line.setText(company)
         # Если пользователь редактирует теги, то проверяем их корректность и временно блокируем кнопку сохранения
         self.recipient_line.textChanged.connect(self.block_save_btn)
         self.company_line.textChanged.connect(self.block_save_btn)
+
+    def upload_text(self, filepath):
+        if self.check_correct_file(self.path_to_file) != 'txt':  # Преобразование файла в текст
+            text = image_to_text(filepath)
+        else:
+            text = txt_to_text(filepath)
+        return text
 
     def block_save_btn(self):  # Проверка пользовательских тегов и блокировка кнопки сохранить
         self.save_btn.setEnabled(False)
@@ -118,7 +144,8 @@ class AddMailDialog(QDialog):  # Класс диалогового окна дл
             self.label_tegs_error.setText('Ошибка')
 
     def save(self):
-        self.tags  = (self.path_to_file, self.recipient_line.text(), self.category_cb.currentText(), self.company_line.text())
+        bd.add_a_record(self.category_cb.currentText(), self.company_line.text(), self.recipient_line.text())
+        bd.commit()
         self.close()
 
 
