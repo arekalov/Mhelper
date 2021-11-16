@@ -25,4 +25,3 @@ def ner_predict(text):
         elif key == 'PER':
             new_dict['PERSON'] = dict[key]
     return new_dict  # Передача словаря с токенами и тегами
-
